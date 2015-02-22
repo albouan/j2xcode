@@ -27,7 +27,9 @@ end
 start_t = Time.now
 
 def error_exit(message)
-	puts message
+	unless message.nil? or message.empty?
+		puts message
+	end
 	puts "FAILURE"
 	exit
 end
@@ -109,11 +111,31 @@ dest_res = dest + "/res"
 old_objc_files = list_objc_files(dest_objc)
 old_objc_files_set = Set.new(old_objc_files)
 
+all_files = []
+
 java_src_folders.each do |src_folder|
 	src = src_folder.first
-	unless Pathname.new(src).directory?
+	if Pathname.new(src).directory?
+		all_files += list_files(src)
+	else
 		error_exit(src + " doesn't exist!")
 	end
+end
+
+all_file_names = all_files.map{|f| Pathname.new(f).basename.to_s}
+unless all_file_names.eql?(all_file_names.uniq)
+	puts "The following files/classes needs to be renamed:"
+	dups = []
+	all_file_names.uniq.each do |file_name|
+		fs = all_files.select{|f| Pathname.new(f).basename.to_s == file_name}
+		if fs.size != 1
+			dups += fs
+		end
+	end
+	dups = dups.uniq.sort{|f1, f2| Pathname.new(f1).basename.to_s <=> Pathname.new(f2).basename.to_s}
+	puts dups.map{|f| Pathname.new(f).basename.to_s + "\t " + Pathname.new(f).dirname.to_s}.delete_if{|f| f.strip.empty?}
+	roll_back(dest_java_bkp, dest_java)
+	error_exit("")
 end
 
 if Pathname.new(dest_java).exist?
@@ -129,23 +151,6 @@ java_src_folders.each_with_index do |src_folder, index|
 	package = src_folder[1]
 	dest = dest_java_subs[index]
 	updated += %x(ruby sync_folder.rb '#{src}' '#{dest}' '#{package}') + "\n"
-end
-
-all_files = list_files(dest_java)
-all_file_names = all_files.map{|f| Pathname.new(f).basename.to_s}
-unless all_file_names.eql?(all_file_names.uniq)
-	puts "The following files/classes needs to be renamed:"
-	dups = []
-	all_file_names.uniq.each do |filename|
-		fs = all_files.select{|f| Pathname.new(f).basename.to_s == filename}
-		if fs.size != 1
-			dups += fs
-		end
-	end
-	dups = dups.uniq.sort{|f1, f2| Pathname.new(f1).basename.to_s <=> Pathname.new(f2).basename.to_s}
-	puts dups.map{|f| p = Pathname.new(f); p.basename.to_s + "\t " + p.dirname.to_s}
-	roll_back(dest_java_bkp, dest_java)
-	error_exit("")
 end
 
 translatable = filter(updated, "ADD") + filter(updated, "UPD")
