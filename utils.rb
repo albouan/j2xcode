@@ -55,6 +55,7 @@ module Constants
 	
 	def self.ignored_files
 	[
+		"overview.html",
 		"package.html",
 		"package-info.java"
 	]
