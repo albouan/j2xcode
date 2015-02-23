@@ -21,7 +21,9 @@ module Constants
 	def self.objc_types
 	[
 		".h", 
-		".m"
+		".m",
+		".hh", 
+		".mm"
 	]
 	end
 	
