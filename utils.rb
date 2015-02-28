@@ -53,6 +53,13 @@ module Constants
 	]
 	end
 	
+	def self.ignored_types
+	[
+		".jflex",
+		".jflex-macro"
+	]
+	end
+	
 	def self.ignored_files
 	[
 		"overview.html",
@@ -64,7 +71,9 @@ end
 
 module Utils
 	def self.ignore?(file)
-		return (Pathname.new(file.to_s).basename.to_s.start_with?(".") or Constants.ignored_files.any?{|f| f == Pathname.new(file.to_s).basename.to_s})
+		return (Pathname.new(file.to_s).basename.to_s.start_with?(".") or 
+		Utils.end_with?(file, Constants.ignored_types) or
+		Constants.ignored_files.any?{|f| f == Pathname.new(file.to_s).basename.to_s})
 	end
 
 	def self.java?(file)
