@@ -47,7 +47,7 @@ end
 
 def find_phase(project, target_name, cls)
 	phases = project.targets.select{|t| t.name == target_name}.first.build_phases.select{|p| p.instance_of? cls}
-	unless phases.size == 1
+	if phases.size > 1
 		puts "WARNING: multiple #{cls.to_s}, using first"
 	end
 	return phases.first
@@ -176,4 +176,7 @@ end
 
 if modified
 	project.save(project_file_p)
+	puts "Updated #{sources_name} contents."
+else
+	puts "No update necessary for #{sources_name}."
 end

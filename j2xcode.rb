@@ -206,8 +206,8 @@ unless translatable.empty? and removed.empty?
 	puts "Cleaning up..."		
 	Utils.clean_up(dest)
 	puts "Updating Xcode project..."
-	%x(ruby sync_xcode.rb '#{project_file}' '#{target_name}' 'Java/objc')
-	%x(ruby sync_xcode.rb '#{project_file}' '#{target_name}' 'Java/res')
+	puts %x(ruby sync_xcode.rb '#{project_file}' '#{target_name}' 'Java/objc')
+	puts %x(ruby sync_xcode.rb '#{project_file}' '#{target_name}' 'Java/res')
 end
 
 if Pathname.new(dest_java_bkp).exist?
