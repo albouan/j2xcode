@@ -113,6 +113,8 @@ old_objc_files_set = Set.new(old_objc_files)
 
 all_files = []
 
+puts "Listing all files..."
+
 java_src_folders.each do |src_folder|
 	src = src_folder.first
 	if Pathname.new(src).directory?
@@ -132,7 +134,7 @@ unless all_file_names.eql?(all_file_names.uniq)
 			dups += fs
 		end
 	end
-	dups = dups.uniq.sort{|f1, f2| Pathname.new(f1).basename.to_s <=> Pathname.new(f2).basename.to_s}
+	dups = dups.uniq.sort{|f1, f2| Pathname.new(f1).dirname.to_s <=> Pathname.new(f2).dirname.to_s}
 	puts dups.map{|f| Pathname.new(f).basename.to_s + "\t " + Pathname.new(f).dirname.to_s}.delete_if{|f| f.strip.empty?}
 	roll_back(dest_java_bkp, dest_java)
 	error_exit("")
