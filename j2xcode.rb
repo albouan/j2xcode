@@ -20,7 +20,7 @@ require "set"
 require_relative "utils"
 
 if ARGV.size < 5
-	puts "Paramaters: 'j2objc_path' 'j2objc_options' 'project_file' 'project_target_name' 'java_src_root::package' ..."
+	puts "Paramaters: 'j2objc_path' 'j2objc_options_file' 'project_file' 'project_target_name' 'java_src_root::package' ..."
 	exit
 end
 
@@ -86,7 +86,7 @@ def roll_back(dest_java_bkp, dest_java)
 end
 
 j2objc_path = ARGV[0] + "/j2objc"
-j2objc_options = ARGV[1]
+j2objc_options = Pathname.new(ARGV[1]).file? ? File.read(ARGV[1]).strip : ""
 project_file = ARGV[2]
 target_name = ARGV[3]
 
@@ -101,8 +101,14 @@ end
 dest = Pathname.new(project_file).dirname.to_s + "/Java"
 dest_java = dest + "/java"
 dest_java_subs = []
-java_src_folders.each_with_index do |folder, index|
-	dest_java_subs << dest_java + "/src" + (index == 0 ? "" : ("-" + index.to_s))
+java_src_folders.each do |folder|
+	java_folder = dest_java + "/" +Pathname.new(folder[0]).basename.to_s
+	index = 1
+	while dest_java_subs.any?{|s| s.to_s == java_folder.to_s} do
+		java_folder = Pathname.new(java_folder.dirname) + (java_folder.basename.to_s + "-" + index.to_s)
+		index += 1
+	end
+	dest_java_subs << java_folder
 end
 dest_java_bkp = dest + "/java-bkp"
 dest_objc = dest + "/objc"
