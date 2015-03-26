@@ -181,7 +181,7 @@ unless translatable.empty? and removed.empty?
 	end
 	resources = translatable.select{|f| !Utils.java?(f)}
 	unless resources.empty?
-		puts "Adding #{resources.size} resource files..."		
+		puts "Adding/updating #{resources.size} resource files..."		
 		resources.each do |f|
 			src_p = Pathname.new(f)
 			dest_p = resolve_res(f, dest_java, dest_res)
