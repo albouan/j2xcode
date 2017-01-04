@@ -1,11 +1,8 @@
-J2Xcode is a Ruby script to synchronize Java sources with Xcode using Google's j2objc tool. It compares the supplied source files with a cache, performs incremental translation, and updates the Xcode project accordingly.
+J2Xcode is a Ruby script to synchronize Java sources with Xcode projects using Google's j2objc tool. The script compares the supplied source files with a cache, performs incremental translation, and updates the Xcode project accordingly.
+
+Under the Xcode project folder, a folder named "Java" will be created and used for caching and generated sources. You can remove this folder from project and disk-delete to cleanup anytime if something goes wrong with synchronization.
 
 Usage: ruby j2xcode.rb '/path/to/j2objc' 'j2objc-options-file' '/path/to/xcode/proj/file.xcodeproj' 'MyTarget' '/path/to/java/src::com/company/app' '/path/to/java/src::net/company2/file.java' ...
 
-Under the Xcode project folder, a folder named "Java" will be created and used for caching and generated sources. You can remove the folder anytime if something goes wrong with synchronization.
-
 Requirements:
 https://github.com/CocoaPods/Xcodeproj
-
-Ismail Alper Yilmaz
-foradictionary@gmail.com
