@@ -77,7 +77,7 @@ end
 def roll_back(dest_java_bkp, dest_java)
 	if Pathname.new(dest_java_bkp).exist?
 		file_count = Utils.count_files(dest_java_bkp)
-		puts "Rolling back #{file_count} files..."
+		puts "Rolling back #{file_count} file(s)..."
 		%x(ruby sync_folder.rb '#{dest_java_bkp}' '#{dest_java}')
 		Utils.delete(dest_java_bkp)
 	else
@@ -119,7 +119,7 @@ old_objc_files_set = Set.new(old_objc_files)
 
 all_files = []
 
-puts "Listing all files..."
+puts "Listing all file(s)..."
 
 java_src_folders.each do |src_folder|
 	src = src_folder.first
@@ -148,11 +148,11 @@ end
 
 if Pathname.new(dest_java).exist?
 	file_count = Utils.count_files(dest_java)
-	puts "Backing up #{file_count} files..."
+	puts "Backing up #{file_count} file(s)..."
 	%x(ruby sync_folder.rb '#{dest_java}' '#{dest_java_bkp}')
 end
 
-puts "Detecting updated files..."
+puts "Detecting updated file(s)..."
 updated = ""
 java_src_folders.each_with_index do |src_folder, index|
 	src = src_folder[0]
@@ -164,14 +164,14 @@ end
 translatable = filter(updated, "ADD") + filter(updated, "UPD")
 removed = filter(updated, "REM")
 updated_count = translatable.size + removed.size
-puts (updated_count != 0 ? "#{updated_count} files updated." : "No files updated.")
+puts (updated_count != 0 ? "#{updated_count} file(s) updated." : "No files updated.")
 
 unless translatable.empty? and removed.empty?
 	j2objc_translatable = translatable.select{|f| Utils.java?(f)}
 	unless j2objc_translatable.empty?
 		j2objc_translatable_count = j2objc_translatable.size
 		j2objc_translatable = j2objc_translatable.map{|f| "'" + f + "'"}.join(" ")
-		puts "Translating #{j2objc_translatable_count} files..."
+		puts "Translating #{j2objc_translatable_count} file(s)..."
 		sourcepath = dest_java_subs.join(":")
 		unless system("#{j2objc_path} #{j2objc_options} -d '#{dest_objc}' -sourcepath '#{sourcepath}' #{j2objc_translatable}")
 			puts "ERROR: j2objc translation failed. Stopping."
@@ -181,7 +181,7 @@ unless translatable.empty? and removed.empty?
 	end
 	resources = translatable.select{|f| !Utils.java?(f)}
 	unless resources.empty?
-		puts "Adding/updating #{resources.size} resource files..."		
+		puts "Adding/updating #{resources.size} resource file(s)..."
 		resources.each do |f|
 			src_p = Pathname.new(f)
 			dest_p = resolve_res(f, dest_java, dest_res)
@@ -189,7 +189,7 @@ unless translatable.empty? and removed.empty?
 		end
 	end
 	unless removed.empty?
-		puts "Removing #{removed.size} files..."		
+		puts "Removing #{removed.size} file(s)..."
 		new_objc_files = list_objc_files(dest_objc)
 		new_objc_files_set = Set.new(new_objc_files)
 		removed.each do |f|
@@ -211,7 +211,7 @@ unless translatable.empty? and removed.empty?
 			end
 		end
 	end
-	puts "Cleaning up..."		
+	puts "Cleaning up..."
 	Utils.clean_up(dest)
 	puts "Updating Xcode project..."
 	puts %x(ruby sync_xcode.rb '#{project_file}' '#{target_name}' 'Java/objc')

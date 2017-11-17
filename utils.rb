@@ -20,13 +20,13 @@ require "fileutils"
 module Constants
 	def self.objc_types
 	[
-		".h", 
+		".h",
 		".m",
-		".hh", 
+		".hh",
 		".mm"
 	]
 	end
-	
+
 	def self.header_types
 	 [
 		".h",
@@ -35,7 +35,7 @@ module Constants
 	]
 	end
 
-	def self.resource_types 
+	def self.resource_types
 	[
 		".html",
 		".htm",
@@ -44,6 +44,7 @@ module Constants
 		".txt",
 		".properties",
 		".xml",
+		".zip",
 		".gif",
 		".png",
 		".jpeg",
@@ -52,14 +53,14 @@ module Constants
 		".tld"
 	]
 	end
-	
+
 	def self.ignored_types
 	[
 		".jflex",
 		".jflex-macro"
 	]
 	end
-	
+
 	def self.ignored_files
 	[
 		"overview.html",
@@ -71,7 +72,7 @@ end
 
 module Utils
 	def self.ignore?(file)
-		return (Pathname.new(file.to_s).basename.to_s.start_with?(".") or 
+		return (Pathname.new(file.to_s).basename.to_s.start_with?(".") or
 		Utils.end_with?(file, Constants.ignored_types) or
 		Constants.ignored_files.any?{|f| f == Pathname.new(file.to_s).basename.to_s})
 	end
@@ -83,13 +84,13 @@ module Utils
 	def self.end_with?(file, exts_a)
 		return exts_a.map{|e| file.to_s.downcase.end_with?(e)}.any?{|b| b}
 	end
-	
+
 	def self.cp(src, dest)
 		d = Pathname.new(dest.to_s)
 		FileUtils.mkdir_p(d.dirname.to_s)
 		FileUtils.cp(src.to_s, d.to_s)
 	end
-	
+
 	def self.mkdir(dir)
 		FileUtils.mkdir_p(dir.to_s)
 	end
@@ -118,7 +119,7 @@ module Utils
 				delete(p)
 			end
 		end
-		return p		
+		return p
 	end
 
 	def self.count_files(dir)
@@ -133,9 +134,9 @@ module Utils
 				n += 1
 			end
 		end
-		return n		
+		return n
 	end
-	
+
 	def self.cmp(file1, file2)
 		return FileUtils.compare_file(file1, file2)
 	end
